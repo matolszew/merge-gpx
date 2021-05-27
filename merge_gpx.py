@@ -5,12 +5,20 @@ import sys
 if __name__ == '__main__':
     f1_name = sys.argv[1]
     f2_name = sys.argv[2]
+    days_change = 0
+    if len(sys.argv) == 4:
+        days_change = datetime.timedelta(days=int(sys.argv[3]))
     out_name = f"{f1_name.split('.')[0]}_{f2_name.split('.')[0]}.gpx"
 
     with open(f1_name, 'r') as file:
         gpx1 = gpxpy.parse(file)
     with open(f2_name, 'r') as file:
         gpx2 = gpxpy.parse(file)
+
+    if days_change != 0:
+        for point in gpx1.tracks[0].segments[0].points:
+            point.adjust_time(days_change)
+
 
     dt = gpx2.tracks[0].segments[0].points[0].time - gpx1.tracks[0].segments[0].points[-1].time
     dt = dt - datetime.timedelta(seconds=5)
